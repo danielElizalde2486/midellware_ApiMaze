@@ -3,6 +3,7 @@ package com.kairos.midelware.service;
 import com.kairos.midelware.client.ImazeClient;
 import com.kairos.midelware.constants.ApiConstants;
 import com.kairos.midelware.dto.Comment;
+import com.kairos.midelware.dto.CommentsPerformance;
 import com.kairos.midelware.dto.Show;
 import com.kairos.midelware.dto.ShowSearchResult;
 import com.kairos.midelware.repository.CommentRepository;
@@ -12,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -26,6 +29,16 @@ public class MidelWareService {
     public List<ShowSearchResult> searchShows(String query){
         log.info(ApiConstants.log_start);
        List<ShowSearchResult> resultShows =  imazeClient.searchShows(query);
+        for (ShowSearchResult result : resultShows) {
+            Show show = result.getShow();
+            Long showId = ((Number) show.getId()).longValue();
+            List<Comment> lstcomments = commentRepository.findByShowId(showId);
+            List<CommentsPerformance> lstcommentsPerformances = new ArrayList<>();
+           for(Comment comment : lstcomments){
+               lstcommentsPerformances.add(CommentsPerformance.builder().comment(comment.getComment()).rating(comment.getRating()).build());
+           }
+            show.setComments(lstcommentsPerformances);
+        }
         log.info(ApiConstants.log_final);
        return resultShows;
     }

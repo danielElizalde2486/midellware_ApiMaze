@@ -2,6 +2,7 @@ package com.kairos.midelware.dto;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -16,6 +17,8 @@ public class Show {
     private String summary;
     private WebChannel webChannel;
     private List<String> genres;
+    @Transient
+    private List<CommentsPerformance> comments;
 
     @Data
     public static class WebChannel {
