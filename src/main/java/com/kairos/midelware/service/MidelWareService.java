@@ -1,6 +1,7 @@
 package com.kairos.midelware.service;
 
 import com.kairos.midelware.client.ImazeClient;
+import com.kairos.midelware.dto.Show;
 import com.kairos.midelware.dto.ShowSearchResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,5 +16,10 @@ public class MidelWareService {
     public List<ShowSearchResult> searchShows(String query){
        List<ShowSearchResult> resultShows =  imazeClient.searchShows(query);
        return resultShows;
+    }
+
+    public Show getShowById(Integer id){
+        Show showresult = imazeClient.getShowById(id);
+        return showresult;
     }
 }
