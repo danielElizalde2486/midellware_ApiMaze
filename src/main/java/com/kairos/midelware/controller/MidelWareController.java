@@ -40,7 +40,7 @@ public class MidelWareController {
         log.info(ApiConstants.log_final);
         return ResponseEntity.ok(showCacheResult);
     }
-
+    @Operation(summary = "Agrega un comentario al showid enviado.")
     @PostMapping("/comments")
     public ResponseEntity<Comment> addComment(@Valid @RequestBody CommentRequest request) {
         Comment savedComment = midelWareService.saveComment(

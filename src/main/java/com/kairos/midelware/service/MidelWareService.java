@@ -32,12 +32,7 @@ public class MidelWareService {
         for (ShowSearchResult result : resultShows) {
             Show show = result.getShow();
             Long showId = ((Number) show.getId()).longValue();
-            List<Comment> lstcomments = commentRepository.findByShowId(showId);
-            List<CommentsPerformance> lstcommentsPerformances = new ArrayList<>();
-           for(Comment comment : lstcomments){
-               lstcommentsPerformances.add(CommentsPerformance.builder().comment(comment.getComment()).rating(comment.getRating()).build());
-           }
-            show.setComments(lstcommentsPerformances);
+            show.setComments(convertTypeComments(show.getId().longValue()));
         }
         log.info(ApiConstants.log_final);
        return resultShows;
@@ -47,12 +42,17 @@ public class MidelWareService {
         log.info(ApiConstants.log_start);
         Optional<Show> cachedShow = showRepository.findById(id);
 
-        if (cachedShow.isPresent())
-            return cachedShow.get();
+        if (cachedShow.isPresent()) {
+           Show show =  cachedShow.get();
+           show.setComments(convertTypeComments(Long.parseLong(id.toString())));
+            return show;
+        }
         Show showresult = imazeClient.getShowById(id);
 
         if (showresult != null)
             showRepository.save(showresult);
+
+        showresult.setComments(convertTypeComments(Long.parseLong(id.toString())));
         log.info(ApiConstants.log_final);
         return showresult;
     }
@@ -67,5 +67,14 @@ public class MidelWareService {
         comment.setRating(rating);
         comment.setCreatedAt(LocalDateTime.now());
         return commentRepository.save(comment);
+    }
+
+    private List<CommentsPerformance> convertTypeComments(Long id ){
+        List<Comment> lstcomments = commentRepository.findByShowId(id);
+        List<CommentsPerformance> lstcommentsPerformances = new ArrayList<>();
+        for(Comment comment : lstcomments){
+            lstcommentsPerformances.add(CommentsPerformance.builder().comment(comment.getComment()).rating(comment.getRating()).build());
+        }
+        return lstcommentsPerformances;
     }
 }
